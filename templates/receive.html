@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Incoming File</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+    <h2>Incoming File</h2>
+    <p><strong>Name:</strong> {{.Name}}</p>
+    <p><strong>Size:</strong> {{printf "%.2f" .SizeMB}} MB</p>
+    <p><strong>Type:</strong> {{.Type}}</p>
+    <form action="/accept" method="get">
+        <button type="submit">Accept</button>
+    </form>
+    <form action="/decline" method="get">
+        <button type="submit">Decline</button>
+    </form>
+    </div>
+</body>
+</html>
