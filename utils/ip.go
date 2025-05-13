@@ -4,13 +4,14 @@ import (
 	"net"
 )
 
-// GetLocalIP detects and returns the first non-loopback IPv4 address.
-func GetLocalIP() string {
+// GetAllLocalIPs returns all IPv4 addresses of non-loopback interfaces
+func GetAllLocalIPs() []string {
+	var ips []string
 	addrs, _ := net.InterfaceAddrs()
 	for _, addr := range addrs {
 		if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() && ipnet.IP.To4() != nil {
-			return ipnet.IP.String()
+			ips = append(ips, ipnet.IP.String())
 		}
 	}
-	return ""
+	return ips
 }
