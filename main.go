@@ -16,11 +16,6 @@ func main() {
 		log.Fatalf("Error creating upload directory: %v", err)
 	}
 
-	ip := utils.GetLocalIP()
-	if ip == "" {
-		log.Fatal("Could not determine local IP address")
-	}
-
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	http.HandleFunc("/", handlers.HomeHandler)
@@ -33,7 +28,10 @@ func main() {
 	http.HandleFunc("/decline", handlers.DeclineHandler)
 
 	port := "8080"
-	fmt.Printf("Server running at: http://%s:%s\n", ip, port)
+	ips := utils.GetAllLocalIPs()
+	for _, ip := range ips {
+		fmt.Printf("Server running at: http://%s:%s\n", ip, port)
+	}
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
