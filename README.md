@@ -55,6 +55,7 @@ This is a simple file-sharing web application built with Go. The application all
 2. Build the Go server:
 
    ```bash
+   go mod tidy
    go build -o server main.go
    ```
 
