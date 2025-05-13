@@ -62,6 +62,6 @@ func downloadFile(w http.ResponseWriter) error {
 }
 
 func getSenderURL() string {
-	ip := utils.GetLocalIP()
+	ip := utils.GetAllLocalIPs()
 	return fmt.Sprintf("http://%s:8080", ip)
 }
