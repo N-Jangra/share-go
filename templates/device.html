@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Device Listener</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/js/app.js"></script>
+</head>
+<body>
+    <header class="nav-bar">
+        <div class="brand">ShareBeam</div>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/upload">Send</a>
+            <a href="/incoming">Receive</a>
+            <a href="/device">Devices</a>
+        </nav>
+    </header>
+    <div class="page" data-device-id="{{.DeviceID}}">
+        <div class="card">
+            <h2>Name this device</h2>
+            <p class="device-meta">We automatically register devices, but you can update the friendly name below.</p>
+            <form id="register-device">
+                <label for="device-name">Device name</label>
+                <input type="text" id="device-name" name="name" placeholder="e.g. Alice's Laptop" required>
+                <button type="submit">Save name</button>
+            </form>
+        </div>
+
+        <div id="listener" class="card secondary hidden">
+            <h2>Listening for transfers</h2>
+            <p class="status"><span class="dot"></span> Device ID <strong id="device-id"></strong></p>
+            <p class="device-meta">Share this ID with senders or stay on this page to get pop-up prompts when someone targets you.</p>
+            <div class="actions">
+                <button id="copy-device-id" class="btn-secondary">Copy ID</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="incoming-popup" class="popup hidden">
+        <div class="popup-content">
+            <h3>Incoming file</h3>
+            <p id="incoming-name"></p>
+            <p class="device-meta" id="incoming-size"></p>
+            <div class="actions">
+                <button id="open-transfer">Accept</button>
+                <button class="btn-secondary" id="dismiss-transfer">Dismiss</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/device.js"></script>
+</body>
+</html>

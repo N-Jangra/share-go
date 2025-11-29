@@ -1,16 +1,104 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Upload File</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Send a File</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/js/app.js"></script>
 </head>
 <body>
-    <div class="container">
-    <h2>Upload File to Share</h2>
-    <form method="POST" action="/uploadFile" enctype="multipart/form-data">
-        <input type="file" name="file" required>
-        <button type="submit">Upload</button>
-    </form>
+    <header class="nav-bar">
+        <div class="brand">ShareBeam</div>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/upload">Send</a>
+            <a href="/incoming">Receive</a>
+            <a href="/device">Devices</a>
+        </nav>
+    </header>
+    <div class="page">
+        <div class="card">
+            <h2>Prepare your transfer</h2>
+            <p>Select what you want to share, attach multiple files, and optionally protect them with a PIN.</p>
+            <form method="POST" action="/uploadFile" enctype="multipart/form-data" id="upload-form">
+                <label for="category">Content type</label>
+                <select name="category" id="category">
+                    <option value="any">Any file</option>
+                    <option value="audio">Audios</option>
+                    <option value="photos">Pictures</option>
+                    <option value="videos">Videos</option>
+                    <option value="documents">Documents</option>
+                    <option value="contacts">Contacts</option>
+                </select>
+
+                <label for="files">Choose files</label>
+                <input type="file" name="files" id="files" multiple required>
+                <div id="file-list" class="file-list"></div>
+
+                <div class="pin-toggle">
+                    <label>
+                        <input type="checkbox" id="toggle-pin">
+                        Require PIN to download
+                    </label>
+                    <input type="password" name="pin" id="pin-input" placeholder="Enter PIN" disabled>
+                </div>
+
+                <button type="submit">Upload & Generate Link</button>
+            </form>
+            <p class="device-meta">Need to prepare a receiver? <a href="/device" style="color: var(--accent);">Open the device listener</a>.</p>
+        </div>
     </div>
+    <script>
+    (function() {
+        const input = document.getElementById('files');
+        const fileList = document.getElementById('file-list');
+        const category = document.getElementById('category');
+        const togglePin = document.getElementById('toggle-pin');
+        const pinInput = document.getElementById('pin-input');
+
+        const acceptMap = {
+            'audio': 'audio/*',
+            'photos': 'image/*',
+            'videos': 'video/*',
+            'documents': '.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx,.md',
+            'contacts': '.vcf,.vcard'
+        };
+
+        function updateAccept() {
+            const value = category.value;
+            input.removeAttribute('accept');
+            if (acceptMap[value]) {
+                input.setAttribute('accept', acceptMap[value]);
+            }
+        }
+
+        function renderFiles() {
+            fileList.innerHTML = '';
+            if (!input.files.length) {
+                fileList.innerHTML = '<p class="device-meta">No files selected.</p>';
+                return;
+            }
+            Array.from(input.files).forEach((file) => {
+                const row = document.createElement('div');
+                row.className = 'file-row';
+                row.innerHTML = `<div class="device-name">${file.name}</div><div class="device-meta">${(file.size / (1024 * 1024)).toFixed(2)} MB</div>`;
+                fileList.appendChild(row);
+            });
+        }
+
+        category.addEventListener('change', updateAccept);
+        input.addEventListener('change', renderFiles);
+        togglePin.addEventListener('change', () => {
+            pinInput.disabled = !togglePin.checked;
+            if (!togglePin.checked) {
+                pinInput.value = '';
+            }
+        });
+
+        updateAccept();
+        renderFiles();
+    })();
+    </script>
 </body>
 </html>

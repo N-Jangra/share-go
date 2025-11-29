@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Share File</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/js/app.js"></script>
+</head>
+<body>
+    <header class="nav-bar">
+        <div class="brand">ShareBeam</div>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/upload">Send</a>
+            <a href="/incoming">Receive</a>
+            <a href="/device">Devices</a>
+        </nav>
+    </header>
+    <div class="page" data-transfer="{{.TransferID}}" data-token="{{.Token}}">
+        <div class="card">
+            <h2>Your files are ready to go!</h2>
+            <p class="device-meta">Category: {{.Category}}{{if .RequiresPin}} · <strong>PIN protected</strong>{{end}}</p>
+            <div class="grid">
+                <div>
+                    <p class="device-meta">Share this link with recipients:</p>
+                    <div class="code-block" id="share-link">{{.ShareLink}}</div>
+                    <div class="actions">
+                        <button id="copy-link">Copy Link</button>
+                        <button class="btn-secondary" id="open-scanner">Scan QR</button>
+                    </div>
+                    <div class="file-list">
+                        <h3>Files ({{len .Files}})</h3>
+                        {{range .Files}}
+                        <div class="file-row">
+                            <div>
+                                <div class="device-name">{{.Name}}</div>
+                                <div class="device-meta">{{printf "%.2f" .SizeMB}} MB · {{.Mime}}</div>
+                            </div>
+                            <a class="button btn-secondary" href="{{.DirectURL}}">Download</a>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+                <div class="qr-wrapper">
+                    <div id="qr"></div>
+                    <p class="device-meta">Scan to open share link</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card secondary">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <h3>Devices on this network</h3>
+                    <p class="device-meta">Tap a device to send them the share link instantly.</p>
+                </div>
+                <a class="button btn-ghost" href="/device">+ Register</a>
+            </div>
+            <div id="devices" class="device-list"></div>
+        </div>
+
+        <div class="actions" style="justify-content:flex-start;">
+            <a class="button btn-secondary" href="/">Return Home</a>
+        </div>
+    </div>
+
+    <script src="/static/js/qrcode.js"></script>
+    <script src="/static/js/jsqr.js"></script>
+    <script src="/static/js/qrscanner.js"></script>
+    <script src="/static/js/share.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            SharePage.init({
+                shareLink: "{{.ShareLink}}",
+                transferId: "{{.TransferID}}",
+                token: "{{.Token}}"
+            });
+        });
+    </script>
+</body>
+</html>

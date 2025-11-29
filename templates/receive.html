@@ -1,21 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Incoming File</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/js/app.js"></script>
 </head>
 <body>
-    <div class="container">
-    <h2>Incoming File</h2>
-    <p><strong>Name:</strong> {{.Name}}</p>
-    <p><strong>Size:</strong> {{printf "%.2f" .SizeMB}} MB</p>
-    <p><strong>Type:</strong> {{.Type}}</p>
-    <form action="/accept" method="get">
-        <button type="submit">Accept</button>
-    </form>
-    <form action="/decline" method="get">
-        <button type="submit">Decline</button>
-    </form>
+    <header class="nav-bar">
+        <div class="brand">ShareBeam</div>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/upload">Send</a>
+            <a href="/incoming">Receive</a>
+            <a href="/device">Devices</a>
+        </nav>
+    </header>
+    <div class="page">
+        <div class="card">
+            <h2>Incoming transfer</h2>
+            <p class="device-meta">Category: {{.Category}}{{if .RequiresPin}} · <strong>PIN protected</strong>{{end}}</p>
+            {{if .NeedsPin}}
+            <form method="post" class="pin-form">
+                <label for="pin">Enter PIN</label>
+                <input type="password" id="pin" name="pin" required>
+                {{if .PinError}}<p class="device-meta" style="color:#f87171">{{.PinError}}</p>{{end}}
+                <button type="submit">Unlock transfer</button>
+            </form>
+            {{else}}
+            <div class="file-list">
+                {{range .Files}}
+                <div class="file-row">
+                    <div>
+                        <div class="device-name">{{.Name}}</div>
+                        <div class="device-meta">{{printf "%.2f" .SizeMB}} MB · {{.Mime}}</div>
+                    </div>
+                    <form action="/file" method="get">
+                        <input type="hidden" name="id" value="{{$.ID}}">
+                        <input type="hidden" name="token" value="{{$.Token}}">
+                        <input type="hidden" name="file" value="{{.ID}}">
+                        <button type="submit">Download</button>
+                    </form>
+                </div>
+                {{end}}
+            </div>
+            <div class="actions" style="justify-content:flex-start;margin-top:1rem;">
+                <form action="/decline" method="get">
+                    <input type="hidden" name="id" value="{{.ID}}">
+                    <input type="hidden" name="token" value="{{.Token}}">
+                    <button type="submit" class="btn-secondary">Decline & Remove</button>
+                </form>
+                <button type="button" class="btn-ghost" id="scan-receive">Scan Sender QR</button>
+            </div>
+            {{end}}
+        </div>
     </div>
+    <script src="/static/js/jsqr.js"></script>
+    <script src="/static/js/qrscanner.js"></script>
+    <script src="/static/js/receive.js"></script>
 </body>
 </html>
