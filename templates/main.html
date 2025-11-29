@@ -1,18 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>File Share - Main</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>File Share</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/js/app.js"></script>
 </head>
 <body>
-    <div class="container">
-    <h2>Choose your Action </h2>
-    <form method="GET" action="/upload">
-        <button type="submit">Send File</button>
-    </form>
-    <form method="GET" action="/incoming">
-        <button type="submit">Receive File</button>
-    </form>
+    <header class="nav-bar">
+        <div class="brand">ShareBeam</div>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/upload">Send</a>
+            <a href="/incoming">Receive</a>
+            <a href="/device">Devices</a>
+        </nav>
+    </header>
+    <div class="page">
+        <section class="hero">
+            <p class="tag">Secure • Tokenized • Private</p>
+            <h1>Share files instantly across your network</h1>
+            <p>Upload once, send to anyone nearby, or simply scan a QR code to pickup the transfer.</p>
+        </section>
+
+        <div class="grid">
+            <div class="card">
+                <h2>Send a file</h2>
+                <p class="status"><span class="dot"></span> Ready to upload</p>
+                <p>Choose a file to generate a private link, QR code, and notify registered devices in one click.</p>
+                <div class="actions">
+                    <a class="button" href="/upload">Send File</a>
+                </div>
+            </div>
+            <div class="card secondary">
+                <h2>Receive a file</h2>
+                <p>Open a share link, scan the QR code, or keep a device listening for incoming transfers.</p>
+                <div class="actions">
+                    <a class="button btn-secondary" href="/incoming">Open Share Link</a>
+                    <a class="button btn-ghost" href="/device">Listen on Device</a>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

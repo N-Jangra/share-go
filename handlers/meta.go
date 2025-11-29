@@ -1,18 +1,36 @@
 package handlers
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
-	"os"
 )
 
-func FileMetaHandler(w http.ResponseWriter, r *http.Request) {
-	if UploadedFileName == "" {
-		http.Error(w, "No file uploaded", http.StatusNotFound)
+func (s *Server) FileMetaHandler(w http.ResponseWriter, r *http.Request) {
+	transfer, err := s.transferFromRequest(r)
+	if err != nil {
+		writeTransferError(w, err)
+		return
+	}
+	if transfer.PinHash != "" && !s.hasPinAccess(r, transfer) {
+		http.Error(w, "pin required", http.StatusForbidden)
 		return
 	}
 
-	fi, _ := os.Stat(UploadedFilePath)
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, `{"name": "%s", "size": %d, "type": "%s"}`, UploadedFileName, fi.Size(), FileMime)
+	files := make([]map[string]interface{}, 0, len(transfer.Files))
+	for _, f := range transfer.Files {
+		files = append(files, map[string]interface{}{
+			"id":   f.ID,
+			"name": f.Name,
+			"mime": f.Mime,
+			"size": f.Size,
+		})
+	}
+	resp := map[string]interface{}{
+		"category":    transfer.Category,
+		"requiresPin": transfer.PinHash != "",
+		"files":       files,
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	_ = json.NewEncoder(w).Encode(resp)
 }
